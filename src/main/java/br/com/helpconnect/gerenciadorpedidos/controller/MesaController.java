@@ -77,4 +77,10 @@ public class MesaController {
 		return mesaService.gerenciaRemoveDoCarrinhoMesa(idMesa, idProduto);
 	}
 	
+	@GetMapping("/limpaCarrinhoMesa/{id}")
+	public boolean limpaCarrinhoMesa(@PathVariable("id") long id) {
+		
+		return mesaService.limpaCarrinhoMesa(id);
+	}
+	
 }

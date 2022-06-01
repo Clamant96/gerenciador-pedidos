@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.com.helpconnect.gerenciadorpedidos.model.Mesa;
@@ -114,6 +113,39 @@ public class MesaService {
 		}
 		
 		return produtos;
+	}
+	
+	public boolean limpaCarrinhoMesa(long id) {
+		
+		boolean retorno = false;
+		
+		// CARREGA O OBJ A SER TRATADO
+		Optional<Mesa> mesaExistete = mesaRepository.findById(id);
+		
+		// LIMPA OS ITENS DO CARRINHO DA MESA
+		for(int i = 0; i < mesaExistete.get().getProdutos().size(); i++) {
+			
+			// REMOVE O ITEM DO ARRAY DO CARRINHO
+			retorno = gerenciaRemoveDoCarrinhoMesa(mesaExistete.get().getId(), mesaExistete.get().getProdutos().get(i).getId());
+			
+			// CASO TENHA SIDO BEM SUCEDIDO E SALVO O DADO NO BANCO
+			if(retorno) {
+				mesaRepository.save(mesaExistete.get());
+				
+			}
+			
+		}
+		
+		// CASO TENHA SIDO LIMPO POR COMPLETO O ARRAY DA MESA, ELE RETORNA UM TRUE CASO CONTRARIO FALSE
+		if(mesaRepository.findById(id).get().getProdutos().size() == 0) {
+			retorno = true;
+		
+		}else {
+			retorno = false;
+		
+		}
+		
+		return retorno;
 	}
 	
 }
