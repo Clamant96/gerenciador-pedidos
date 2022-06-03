@@ -37,10 +37,15 @@ public class Mesa {
 	  joinColumns = @JoinColumn(name = "mesa_id"), 
 	  inverseJoinColumns = @JoinColumn(name = "produto_id")
 	  )
-	@JsonIgnoreProperties({"nome", "preco", "ativo", "promocao", "img", "mesas"})
+	@JsonIgnoreProperties({"nome", "preco", "ativo", "promocao", "img", "mesas", "categoria", "descricao"})
 	private List<Produto> produtos = new ArrayList<>();
 	
 	private String img;
+	
+	@NotNull
+	private String tipo;
+	
+	private double total;
 
 	public long getId() {
 		return id;
@@ -80,6 +85,22 @@ public class Mesa {
 
 	public void setImg(String img) {
 		this.img = img;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public double getTotal() {
+		return total;
+	}
+
+	public void setTotal(double total) {
+		this.total = total;
 	}
 	
 }

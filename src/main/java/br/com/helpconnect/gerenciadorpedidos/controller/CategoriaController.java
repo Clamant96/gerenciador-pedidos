@@ -15,29 +15,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.helpconnect.gerenciadorpedidos.model.Produto;
-import br.com.helpconnect.gerenciadorpedidos.repository.ProdutoRepository;
-import br.com.helpconnect.gerenciadorpedidos.service.ProdutoService;
+import br.com.helpconnect.gerenciadorpedidos.model.Categoria;
+import br.com.helpconnect.gerenciadorpedidos.repository.CategoriaRepository;
 
 @RestController
-@RequestMapping("/produtos")
+@RequestMapping("/categorias")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class ProdutoController {
+public class CategoriaController {
 
 	@Autowired
-	private ProdutoRepository repository;
-	
-	@Autowired
-	private ProdutoService service;
+	private CategoriaRepository repository;
 	
 	@GetMapping
-	public ResponseEntity<List<Produto>> findAllProdutos() {
+	public ResponseEntity<List<Categoria>> findAllCategorias() {
 		
 		return ResponseEntity.ok(repository.findAll());
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Produto> findByIdProduto(@PathVariable("id") long id) {
+	public ResponseEntity<Categoria> findByIdCategoria(@PathVariable("id") long id) {
 		
 		return repository.findById(id)
 				.map(resp -> ResponseEntity.ok(resp))
@@ -45,19 +41,19 @@ public class ProdutoController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Produto> cadastrarProduto(@RequestBody Produto produto) {
+	public ResponseEntity<Categoria> cadastrarCategoria(@RequestBody Categoria categoria) {
 		
-		return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(service.calculaPromocao(produto)));
+		return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(categoria));
 	}
 	
 	@PutMapping
-	public ResponseEntity<Produto> atualizarProduto(@RequestBody Produto produto) {
+	public ResponseEntity<Categoria> atualizarCategoria(@RequestBody Categoria categoria) {
 		
-		return ResponseEntity.status(HttpStatus.OK).body(repository.save(service.calculaPromocao(produto)));
+		return ResponseEntity.status(HttpStatus.OK).body(repository.save(categoria));
 	}
 	
 	@DeleteMapping("/{id}")
-	public void deletaProduto(@PathVariable("id") long id) {
+	public void deletaCategoria(@PathVariable("id") long id) {
 		repository.deleteById(id);
 		
 	}

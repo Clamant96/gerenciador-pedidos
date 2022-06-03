@@ -10,8 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -38,10 +40,17 @@ public class Produto {
 	private String img;
 	
 	@ManyToMany(mappedBy = "produtos", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JsonIgnoreProperties({"nome", "senha", "produtos", "img"})
+	@JsonIgnoreProperties({"nome", "senha", "produtos", "img", "tipo", "total"})
 	private List<Mesa> mesas = new ArrayList<>();
 	
 	private int qtdProduto;
+	
+	@Size(max = 1500)
+	private String descricao;
+	
+	@ManyToOne
+	@JsonIgnoreProperties("produtos")
+	private Categoria categoria;
 
 	public long getId() {
 		return id;
@@ -105,6 +114,22 @@ public class Produto {
 
 	public void setQtdProduto(int qtdProduto) {
 		this.qtdProduto = qtdProduto;
+	}
+
+	public Categoria getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 	
 }

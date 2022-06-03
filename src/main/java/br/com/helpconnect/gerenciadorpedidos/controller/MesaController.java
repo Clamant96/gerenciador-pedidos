@@ -1,13 +1,19 @@
 package br.com.helpconnect.gerenciadorpedidos.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,7 +36,29 @@ public class MesaController {
 	@GetMapping
 	public ResponseEntity<List<Mesa>> findAllMesas() {
 		
-		return ResponseEntity.ok(repository.findAll());
+		List<Mesa> listaMesas = repository.findAll();
+		
+		for(int i = 0; i < listaMesas.size(); i++) {
+			
+			// BUSCA A MESA POR ID
+			Optional<Mesa> mesaExistente = repository.findById(listaMesas.get(i).getId());
+			
+			// POPULA O OBJ COM OS DADOS RETORNANDO
+			listaMesas.get(i).setTotal(mesaService.calculaTotalCarrinho(mesaExistente.get()));
+			
+		}
+		
+		for(int i = 0; i < listaMesas.size(); i++) {
+			
+			// BUSCA A MESA POR ID
+			Optional<Mesa> mesaExistente = repository.findById(listaMesas.get(i).getId());
+			
+			// POPULA O OBJ COM OS DADOS RETORNANDO
+			listaMesas.get(i).setProdutos(mesaService.verificaDuplicidadeProdutos(mesaExistente.get())); // AJUSTA A LISTA, VERIFICANDO DUPLICIDANDE DE DADOS
+			
+		}
+		
+		return ResponseEntity.ok(listaMesas);
 	}
 	
 	@GetMapping("/{id}")
@@ -46,12 +74,14 @@ public class MesaController {
 		mesa.setNome(mesaExistente.get().getNome());
 		mesa.setProdutos(mesaService.verificaDuplicidadeProdutos(mesaExistente.get())); // AJUSTA A LISTA, VERIFICANDO DUPLICIDANDE DE DADOS
 		mesa.setSenha(mesaExistente.get().getSenha());
+		mesa.setTipo(mesaExistente.get().getTipo());
+		mesa.setTotal(mesaService.calculaTotalCarrinho(mesaExistente.get()));
 		
 		return ResponseEntity.ok(mesa);
 	}
 	
 	
-	@GetMapping("/{nome}")
+	@GetMapping("nome/{nome}")
 	public ResponseEntity<Mesa> findByNomeMesa(@PathVariable("nome") String nome) {
 		
 		return repository.findByNome(nome)
@@ -81,6 +111,24 @@ public class MesaController {
 	public boolean limpaCarrinhoMesa(@PathVariable("id") long id) {
 		
 		return mesaService.limpaCarrinhoMesa(id);
+	}
+	
+	@PostMapping
+	public ResponseEntity<Mesa> cadastraMesa(@RequestBody Mesa mesa) {
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(mesa));
+	}
+	
+	@PutMapping
+	public ResponseEntity<Mesa> atualizaMesa(@RequestBody Mesa mesa) {
+		
+		return ResponseEntity.status(HttpStatus.OK).body(repository.save(mesa));
+	}
+	
+	@DeleteMapping("/{id}")
+	public void deleteaMesa(@PathVariable long id) {
+		repository.deleteById(id);
+		
 	}
 	
 }

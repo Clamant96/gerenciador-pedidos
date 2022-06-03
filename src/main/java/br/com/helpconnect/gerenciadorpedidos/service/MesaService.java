@@ -1,5 +1,7 @@
 package br.com.helpconnect.gerenciadorpedidos.service;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,26 @@ public class MesaService {
 		
 		// ARMAZENA OS DADOS DA MESA POR ID
 		Optional<Mesa> retornoMesa = mesaRepository.findById(id);
+		
+		// CASO NAO SE TENHA DADOS NO ARRAY DO CARRINHO DA MESA RETORNA UM OBJ PRODUTO VAZIO
+		if(retornoMesa.get().getProdutos().size() == 0) {
+			Produto produtoVazio = new Produto();
+			
+			return produtoVazio;
+		}
+		
+		int contador = 0;
+		
+		for(int i = 0 ; i < retornoMesa.get().getProdutos().size(); i++) {
+			if(retornoMesa.get().getProdutos().get(retornoMesa.get().getProdutos().size() - 1).getId() == retornoMesa.get().getProdutos().get(i).getId()) {
+				
+				contador = contador + 1;
+				
+			}
+			
+		}
+		
+		retornoMesa.get().getProdutos().get(retornoMesa.get().getProdutos().size() - 1).setQtdProduto(contador); // AJUSTA A QTD DE PRODUTOS REPETIDOS NO ARRAY DA MESA
 		
 		// RETORNA O ULTIMO PRODUTO CADASTRADO NO CARRINHO DA MESA
 		return retornoMesa.get().getProdutos().get(retornoMesa.get().getProdutos().size() - 1);
@@ -85,16 +107,20 @@ public class MesaService {
 			for(int j = 0; j < mesa.getProdutos().size(); j++) {
 				
 				// VERIFICA SE EXISTE REPETICAO DO PRODUTO, PARA REALIZAR O INCREMENTO DO VALOR AO 'QTDPRODUTO'
-				if(mesa.getProdutos().contains(mesa.getProdutos().get(j))) {
-					mesa.getProdutos().get(i).setQtdProduto(contadorProduto++); // INCREMENTA O VALOR NO CONTADOR
+				if(mesa.getProdutos().get(i).getId() == mesa.getProdutos().get(j).getId()) {
 					
+					contadorProduto = contadorProduto + 1;
+					
+					mesa.getProdutos().get(i).setQtdProduto(contadorProduto); // INCREMENTA O VALOR NO CONTADOR
+				
 				}
-			
+				
 			}
 			
 			// SE ELE NAO EXISTER NA LISTA AINDA, ELE E ADICIONADO
-			if(!mesa.getProdutos().contains(mesa.getProdutos().get(i))) {
+			if(!produtos.contains(mesa.getProdutos().get(i))) {
 				produtos.add(mesa.getProdutos().get(i));
+
 			}
 			
 			contadorProduto = 0; // ZERA O CONTADOR PARA O PROXIMO PRODUTO
@@ -115,26 +141,32 @@ public class MesaService {
 		return produtos;
 	}
 	
+	public double calculaTotalCarrinho(Mesa mesa) {
+		
+		double total = 0.0;
+		
+		for(int i = 0; i < mesa.getProdutos().size(); i++) {
+			total = total + mesa.getProdutos().get(i).getPreco();
+			
+		}
+		
+		NumberFormat formatter = new DecimalFormat("#0.00");
+		return Double.parseDouble(formatter.format(total).replace(",", "."));
+	}
+	
 	public boolean limpaCarrinhoMesa(long id) {
 		
 		boolean retorno = false;
 		
 		// CARREGA O OBJ A SER TRATADO
 		Optional<Mesa> mesaExistete = mesaRepository.findById(id);
+		List<Produto> listaProduto = new ArrayList<>();
 		
 		// LIMPA OS ITENS DO CARRINHO DA MESA
-		for(int i = 0; i < mesaExistete.get().getProdutos().size(); i++) {
-			
-			// REMOVE O ITEM DO ARRAY DO CARRINHO
-			retorno = gerenciaRemoveDoCarrinhoMesa(mesaExistete.get().getId(), mesaExistete.get().getProdutos().get(i).getId());
-			
-			// CASO TENHA SIDO BEM SUCEDIDO E SALVO O DADO NO BANCO
-			if(retorno) {
-				mesaRepository.save(mesaExistete.get());
-				
-			}
-			
-		}
+		mesaExistete.get().setProdutos(listaProduto);
+		
+		// SALVA AS MODIFICACOES NO BANCO
+		mesaRepository.save(mesaExistete.get());
 		
 		// CASO TENHA SIDO LIMPO POR COMPLETO O ARRAY DA MESA, ELE RETORNA UM TRUE CASO CONTRARIO FALSE
 		if(mesaRepository.findById(id).get().getProdutos().size() == 0) {
