@@ -37,7 +37,8 @@ public class Mesa {
 	  joinColumns = @JoinColumn(name = "mesa_id"), 
 	  inverseJoinColumns = @JoinColumn(name = "produto_id")
 	  )
-	@JsonIgnoreProperties({"nome", "preco", "ativo", "promocao", "img", "mesas", "categoria", "descricao"})
+	// @JsonIgnoreProperties({"nome", "preco", "ativo", "promocao", "img", "mesas", "categoria", "descricao"})
+	@JsonIgnoreProperties({"preco", "ativo", "promocao",  "mesas", "categoria", "descricao"})
 	private List<Produto> produtos = new ArrayList<>();
 	
 	private String img;

@@ -104,6 +104,7 @@ public class MesaService {
 		// NAVEGA NO ARRAY DE PRODUTO DO USUARIO, E CASO ELE SEJA REPEDIDO, E INCREMENTADO O VALOR NA QTDPRODUTO E ADICIONADO AO ARRAY
 		// CASO ELE NAO EXISTA AINDA NO ARRAY
 		for(int i = 0; i < mesa.getProdutos().size(); i++) {
+			
 			for(int j = 0; j < mesa.getProdutos().size(); j++) {
 				
 				// VERIFICA SE EXISTE REPETICAO DO PRODUTO, PARA REALIZAR O INCREMENTO DO VALOR AO 'QTDPRODUTO'
@@ -112,22 +113,26 @@ public class MesaService {
 					contadorProduto = contadorProduto + 1;
 					
 					mesa.getProdutos().get(i).setQtdProduto(contadorProduto); // INCREMENTA O VALOR NO CONTADOR
+					mesa.getProdutos().get(i).setNome(mesa.getProdutos().get(j).getNome()); // INCREMENTA O VALOR NO CONTADOR
+					mesa.getProdutos().get(i).setImg(mesa.getProdutos().get(j).getImg()); // INCREMENTA O VALOR NO CONTADOR
 				
 				}
 				
 			}
 			
-			// SE ELE NAO EXISTER NA LISTA AINDA, ELE E ADICIONADO
 			if(!produtos.contains(mesa.getProdutos().get(i))) {
+				System.out.println("Mesa: "+ mesa.getNome());
+				System.out.println("Nome: "+ mesa.getProdutos().get(i).getNome() +" | "+ mesa.getProdutos().get(i).getQtdProduto());
+				
 				produtos.add(mesa.getProdutos().get(i));
-
+				
 			}
 			
 			contadorProduto = 0; // ZERA O CONTADOR PARA O PROXIMO PRODUTO
 			
 		}
 		
-		for (Produto produto : mesa.getProdutos()) {
+		/*for (Produto produto : mesa.getProdutos()) {
 			if(mesa.getProdutos().contains(produto.getId())) {
 				
 				// SE ELE NAO EXISTER NA LISTA AINDA, ELE E ADICIONADO
@@ -136,7 +141,7 @@ public class MesaService {
 				}
 				
 			}
-		}
+		}*/
 		
 		return produtos;
 	}
