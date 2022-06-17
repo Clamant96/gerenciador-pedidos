@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.helpconnect.gerenciadorpedidos.model.Mesa;
+import br.com.helpconnect.gerenciadorpedidos.model.MesaLogin;
 import br.com.helpconnect.gerenciadorpedidos.model.Produto;
 import br.com.helpconnect.gerenciadorpedidos.repository.MesaRepository;
 import br.com.helpconnect.gerenciadorpedidos.repository.ProdutoRepository;
@@ -146,6 +147,46 @@ public class MesaService {
 		return produtos;
 	}
 	
+	public List<Produto> verificaDuplicidadeProdutosTodasMesas(Mesa mesa) {
+		
+		List<Produto> produtos = new ArrayList<>();
+		
+		int contadorProduto = 0;
+		
+		// NAVEGA NO ARRAY DE PRODUTO DO USUARIO, E CASO ELE SEJA REPEDIDO, E INCREMENTADO O VALOR NA QTDPRODUTO E ADICIONADO AO ARRAY
+		// CASO ELE NAO EXISTA AINDA NO ARRAY
+		for (Produto produto : mesa.getProdutos()) {
+
+			for (Produto produtoRepeticao : mesa.getProdutos()) {
+
+				// VERIFICA SE EXISTE REPETICAO DO PRODUTO, PARA REALIZAR O INCREMENTO DO VALOR AO 'QTDPRODUTO'
+				if(produto.getId() == produtoRepeticao.getId()) {
+						
+					contadorProduto = contadorProduto + 1;
+					
+					produto.setQtdProduto(contadorProduto); // INCREMENTA O VALOR NO CONTADOR
+
+				}
+
+			}
+
+			if(!produtos.contains(produto)) {
+				
+				if(mesa.getTipo() != "adm") {
+					produtos.add(produto);
+				}
+				
+			}
+			
+			contadorProduto = 0; // ZERA O CONTADOR PARA O PROXIMO PRODUTO
+			
+		}
+
+		contadorProduto = 0; // ZERA O CONTADOR PARA O PROXIMO PRODUTO
+		
+		return produtos;
+	}
+	
 	public double calculaTotalCarrinho(Mesa mesa) {
 		
 		double total = 0.0;
@@ -183,6 +224,30 @@ public class MesaService {
 		}
 		
 		return retorno;
+	}
+
+	public Optional<MesaLogin> logar(Optional<MesaLogin> mesaLogin) {
+
+		Optional<Mesa> mesa = mesaRepository.findByNome(mesaLogin.get().getNome());
+
+		if (mesa.isPresent()) {
+			if(mesa.get().getSenha().equals(mesaLogin.get().getSenha())) {
+				mesaLogin.get().setId(mesa.get().getId());
+				mesaLogin.get().setImg(mesa.get().getImg());
+				mesaLogin.get().setTipo(mesa.get().getTipo());
+				mesaLogin.get().setSenha(mesa.get().getSenha()); 
+				mesaLogin.get().setNome(mesa.get().getNome());	
+
+				return mesaLogin;
+				
+			}else {
+
+				return null;
+			}
+
+		}
+
+		return null;
 	}
 	
 }

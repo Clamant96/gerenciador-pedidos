@@ -1,6 +1,5 @@
 package br.com.helpconnect.gerenciadorpedidos.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.helpconnect.gerenciadorpedidos.model.Mesa;
+import br.com.helpconnect.gerenciadorpedidos.model.MesaLogin;
 import br.com.helpconnect.gerenciadorpedidos.model.Produto;
 import br.com.helpconnect.gerenciadorpedidos.repository.MesaRepository;
 import br.com.helpconnect.gerenciadorpedidos.service.MesaService;
@@ -42,20 +42,26 @@ public class MesaController {
 			
 			// BUSCA A MESA POR ID
 			Optional<Mesa> mesaExistente = repository.findById(listaMesas.get(i).getId());
-			
+
 			// POPULA O OBJ COM OS DADOS RETORNANDO
 			listaMesas.get(i).setTotal(mesaService.calculaTotalCarrinho(mesaExistente.get()));
-			
-		}
-		
-		for(int i = 0; i < listaMesas.size(); i++) {
-			
-			// BUSCA A MESA POR ID
-			Optional<Mesa> mesaExistente = repository.findById(listaMesas.get(i).getId());
-			
+
 			// POPULA O OBJ COM OS DADOS RETORNANDO
-			listaMesas.get(i).setProdutos(mesaService.verificaDuplicidadeProdutos(mesaExistente.get())); // AJUSTA A LISTA, VERIFICANDO DUPLICIDANDE DE DADOS
+			listaMesas.get(i).setProdutos(mesaService.verificaDuplicidadeProdutosTodasMesas(mesaExistente.get())); // AJUSTA A LISTA, VERIFICANDO DUPLICIDANDE DE DADOS
+
+		}
+
+		List<Mesa> listaMesasMemoria = listaMesas;
+
+		for(int i = 0; i < listaMesasMemoria.size(); i++) {
+			if(listaMesasMemoria.get(i).getTipo().equals("adm")) {
+				listaMesas.remove(i);
 			
+			}else if(listaMesas.get(i).getProdutos().size() == 0) {
+				listaMesas.remove(i);
+
+			}
+
 		}
 		
 		return ResponseEntity.ok(listaMesas);
@@ -117,6 +123,13 @@ public class MesaController {
 	public ResponseEntity<Mesa> cadastraMesa(@RequestBody Mesa mesa) {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(mesa));
+	}
+
+	@PostMapping("/login")
+	public ResponseEntity<MesaLogin> login(@RequestBody Optional<MesaLogin> usuarioLogin) {
+		return mesaService.logar(usuarioLogin)
+			.map(resp -> ResponseEntity.ok(resp))
+			.orElse(ResponseEntity.notFound().build());
 	}
 	
 	@PutMapping
