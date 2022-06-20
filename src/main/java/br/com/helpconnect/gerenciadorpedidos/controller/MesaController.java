@@ -1,5 +1,6 @@
 package br.com.helpconnect.gerenciadorpedidos.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,20 +52,18 @@ public class MesaController {
 
 		}
 
-		List<Mesa> listaMesasMemoria = listaMesas;
+		List<Mesa> listaMesasMemoria = new ArrayList<>();
 
-		for(int i = 0; i < listaMesasMemoria.size(); i++) {
-			if(listaMesasMemoria.get(i).getTipo().equals("adm")) {
-				listaMesas.remove(i);
+		// APLICA UM FILTRO PARA REMOVER OS ITENS COM LISTA VAZIA E ADM
+		for(int i = 0; i < listaMesas.size(); i++) {
 			
-			}else if(listaMesas.get(i).getProdutos().size() == 0) {
-				listaMesas.remove(i);
-
+			if(!(listaMesas.get(i).getTipo().contains("adm")) && !(listaMesas.get(i).getProdutos().size() == 0)) {
+				listaMesasMemoria.add(listaMesas.get(i));
 			}
 
 		}
 		
-		return ResponseEntity.ok(listaMesas);
+		return ResponseEntity.ok(listaMesasMemoria);
 	}
 	
 	@GetMapping("/{id}")
