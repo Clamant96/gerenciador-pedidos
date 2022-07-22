@@ -54,6 +54,7 @@ public class CategoriaController {
 	
 	@DeleteMapping("/{id}")
 	public void deletaCategoria(@PathVariable("id") long id) {
+		
 		repository.deleteById(id);
 		
 	}
