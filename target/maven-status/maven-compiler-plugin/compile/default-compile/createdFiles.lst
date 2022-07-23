@@ -1,0 +1,14 @@
+br\com\helpconnect\gerenciadorpedidos\model\MesaLogin.class
+br\com\helpconnect\gerenciadorpedidos\service\MesaService.class
+br\com\helpconnect\gerenciadorpedidos\model\Mesa.class
+br\com\helpconnect\gerenciadorpedidos\controller\MesaController.class
+br\com\helpconnect\gerenciadorpedidos\controller\ProdutoController.class
+br\com\helpconnect\gerenciadorpedidos\GerenciadorpedidosApplication.class
+br\com\helpconnect\gerenciadorpedidos\repository\CategoriaRepository.class
+br\com\helpconnect\gerenciadorpedidos\service\ProdutoService.class
+br\com\helpconnect\gerenciadorpedidos\model\Produto.class
+br\com\helpconnect\gerenciadorpedidos\model\Categoria.class
+br\com\helpconnect\gerenciadorpedidos\ServletInitializer.class
+br\com\helpconnect\gerenciadorpedidos\repository\ProdutoRepository.class
+br\com\helpconnect\gerenciadorpedidos\controller\CategoriaController.class
+br\com\helpconnect\gerenciadorpedidos\repository\MesaRepository.class
