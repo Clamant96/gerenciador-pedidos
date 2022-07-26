@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<project name="nation" default="full-suite" basedir=".">
+ 
+    <!-- GLOBAL VARIABLES -->
+    <property name="source" value="app" />
+    <!-- END -->
+ 
+    <!-- AVAILABLE COMMANDS -->
+    <target name="full-suite" depends="date, list" />
+    <!-- END -->
+ 
+    <!-- DATE -->
+    <target name="date">
+        <echo message="Printing system date ..."/>
+        <exec executable="date" />
+    </target>
+    <!-- END -->
+ 
+    <!-- LIST -->
+    <target name="list">
+        <echo message="Listing source folder ..."/>
+        <exec executable="ls">
+            <arg line="-l ${source}" />
+        </exec>
+    </target>
+    <!-- END -->
+ 
+</project>
