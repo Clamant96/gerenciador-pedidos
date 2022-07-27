@@ -26,6 +26,7 @@ public class CategoriaController {
 	@Autowired
 	private CategoriaRepository repository;
 	
+	// TESTE
 	@GetMapping
 	public ResponseEntity<List<Categoria>> findAllCategorias() {
 		
